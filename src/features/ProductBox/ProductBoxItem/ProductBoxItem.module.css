@@ -1,11 +1,8 @@
 .productItem {
     display: flex;
     justify-content: space-around;
-    border: 1px solid black;
-    align-items: center;
-    width: 90%;
-    height: 40px;
-    margin: 0 auto 10px auto;
+    flex-direction: row;
+
 }
 .buttons {
     display: flex;

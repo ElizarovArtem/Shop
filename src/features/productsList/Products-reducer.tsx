@@ -1,11 +1,11 @@
-import {createAsyncThunk, createSlice, PayloadAction} from "@reduxjs/toolkit";
+import {createAction, createAsyncThunk, createSlice, PayloadAction} from "@reduxjs/toolkit";
 import {RootStateType} from "../../store/store";
 
-let initialState = [
-    {id: 1, name: "Boots", price: "5$", inBoxCount: 0},
-    {id: 2, name: "Jeans", price: "12$", inBoxCount: 0},
-    {id: 3, name: "Shorts", price: "8$", inBoxCount: 0},
-    {id: 4, name: "Heads", price: "15$", inBoxCount: 0}
+let initialState: Array<ProductType> = [
+    {id: 1, name: "Boots", price: "5$", inBoxCount: 0, isInitialized: false},
+    {id: 2, name: "Jeans", price: "12$", inBoxCount: 0, isInitialized: false},
+    {id: 3, name: "Shorts", price: "8$", inBoxCount: 0, isInitialized: false},
+    {id: 4, name: "Heads", price: "15$", inBoxCount: 0, isInitialized: false}
 ]
 
 export const addItemToBoxTC = createAsyncThunk<{ id: number, type: OperationType },
@@ -24,24 +24,27 @@ export const addItemToBoxTC = createAsyncThunk<{ id: number, type: OperationType
     }
     return {id: param.productId, type: param.operationType}
 })
-
-export const setInBoxCountTC = createAsyncThunk<any,
+export const setInBoxCountTC = createAsyncThunk<void,
     { id: number},
-    {}>("products/setInBoxCount", (param, thunkAPI) => {
+    { state: RootStateType }>("products/setInBoxCount", (param, thunkAPI) => {
     const count = localStorage.getItem(param.id.toString())
-    if (count) {
-        thunkAPI.dispatch(setInBoxCount({id: param.id, count: +count}))
+    const product = thunkAPI.getState().products.find(p => p.id === param.id)
+    if (count && product) {
+        thunkAPI.dispatch(setInBoxCount({product: product, count: +count}))
     }
 })
+
+export const setTotalPriceAC = createAction<number>("products/setTotalPrice")
 
 export const slice = createSlice({
     name: "products",
     initialState: initialState,
     reducers: {
-        setInBoxCount: (state, action: PayloadAction<{ id: number, count: number}>) => {
-            const product = state.find(p => p.id === action.payload.id)
+        setInBoxCount: (state, action: PayloadAction<{ product: ProductType, count: number}>) => {
+            const product = state.find(p => p.id === action.payload.product.id)
             if (product) {
                 product.inBoxCount = action.payload.count
+                product.isInitialized = true
             }
         }
     },
@@ -68,5 +71,6 @@ export type ProductType = {
     name: string
     price: string
     inBoxCount: number
+    isInitialized: boolean
 }
 export type OperationType = "inc" | "dec"

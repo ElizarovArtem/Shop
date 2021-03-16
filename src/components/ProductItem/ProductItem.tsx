@@ -2,6 +2,7 @@ import {ProductType, setInBoxCountTC} from "../../features/productsList/Products
 import React, {useEffect} from "react";
 import s from "./ProductItem.module.css"
 import {useDispatch} from "react-redux";
+import {Button, Card} from 'antd';
 
 type ProductItemType = {
     product: ProductType
@@ -18,13 +19,11 @@ export const ProductItem: React.FC<ProductItemType> = ({product, ...props}) => {
     }
 
     return (
-        <div className={s.productItem}>
-            <div>{product.name}</div>
-            <div>{product.price}</div>
-            <div>{product.inBoxCount}</div>
-            <div>
-                <button onClick={onAddProductToBox}>Add</button>
-            </div>
-        </div>
+        <Card title={product.name} type={"inner"} hoverable>
+            <p>Price: {product.price}</p>
+            <Button type="primary" size={"middle"} onClick={onAddProductToBox}>
+                Primary
+            </Button>
+        </Card>
     )
 }

@@ -11,10 +11,8 @@
     gap: 10px;
     height: 100%;
     margin: auto 10px auto 0;
+    padding: 6px;
 }
 .number {
     color: white;
-    display: flex;
-    justify-content: center;
-    align-items: center;
 }
